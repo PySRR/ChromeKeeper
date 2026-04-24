@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tab Manager - Side Panel</title>
+  <link rel="stylesheet" href="styles/sidePanel.css">
+</head>
+<body>
+  <div class="sidepanel-container">
+    <header class="sidepanel-header">
+      <h1>Open Tabs</h1>
+      <div class="header-actions">
+        <button id="refreshTabs" class="btn btn-icon" title="Refresh tabs">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M13.65 2.35C11.89 0.61 9.39 -0.18 6.95 0.28L7.89 1.22C9.85 0.89 11.85 1.56 13.15 3.05L10.5 3.05L10.5 5.05L15.5 5.05L15.5 0.05L13.5 0.05L13.65 2.35ZM2.35 13.65C4.11 15.39 6.61 16.18 9.05 15.72L8.11 14.78C6.15 15.11 4.15 14.44 2.85 12.95L5.5 12.95L5.5 10.95L0.5 10.95L0.5 15.95L2.5 15.95L2.35 13.65Z"/>
+          </svg>
+        </button>
+        <button id="summarizeAll" class="btn btn-primary btn-small">Summarize All</button>
+      </div>
+    </header>
+
+    <main class="sidepanel-content">
+      <div id="overviewSection" class="overview-section" style="display: none;">
+        <h2>Overview</h2>
+        <div id="overviewSummary" class="overview-summary"></div>
+      </div>
+
+      <div id="tabGroups" class="tab-groups">
+        <div class="loading">Loading tabs...</div>
+      </div>
+    </main>
+
+    <footer class="sidepanel-footer">
+      <span id="tabCount">0 tabs</span>
+      <button id="openSettings" class="btn btn-link">Settings</button>
+    </footer>
+  </div>
+
+  <template id="groupTemplate">
+    <div class="tab-group">
+      <div class="group-header">
+        <button class="group-toggle">
+          <svg class="group-chevron" width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
+            <path d="M4 2L8 6L4 10"/>
+          </svg>
+        </button>
+        <img class="group-favicon" src="" alt="" onerror="this.style.display='none'">
+        <span class="group-domain"></span>
+        <span class="group-count"></span>
+        <button class="btn btn-small group-summarize">Summarize</button>
+      </div>
+      <div class="group-content">
+        <div class="group-summary" style="display: none;"></div>
+        <div class="tabs-list"></div>
+      </div>
+    </div>
+  </template>
+
+  <template id="tabItemTemplate">
+    <div class="tab-item" draggable="true">
+      <img class="tab-favicon" src="" alt="" onerror="this.src='icons/icon16.png'">
+      <div class="tab-info">
+        <span class="tab-title"></span>
+        <span class="tab-url"></span>
+      </div>
+      <div class="tab-indicators">
+        <span class="tab-badge tab-pinned" style="display: none;">P</span>
+        <span class="tab-badge tab-active" style="display: none;">A</span>
+        <span class="tab-badge tab-window"></span>
+      </div>
+    </div>
+  </template>
+
+  <script src="sidePanel.js"></script>
+</body>
+</html>
