@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ChromeKeeper - Settings</title>
+  <link rel="stylesheet" href="settings.css">
+</head>
+<body>
+  <div class="settings-container">
+    <!-- Header -->
+    <header class="settings-header">
+      <h1>ChromeKeeper Settings</h1>
+    </header>
+
+    <!-- Main Content -->
+    <main class="settings-content">
+      <!-- API Key Section -->
+      <section class="settings-section">
+        <h2>OpenRouter API</h2>
+        <div class="form-group">
+          <label for="apiKeyInput">API Key</label>
+          <div class="input-with-button">
+            <input type="password" id="apiKeyInput" placeholder="Enter your OpenRouter API key" autocomplete="off">
+            <button id="saveApiKeyBtn" class="btn btn-primary">Save</button>
+          </div>
+          <p class="form-hint">Get your API key from <a href="https://openrouter.ai/keys" target="_blank" rel="noopener noreferrer">openrouter.ai/keys</a></p>
+        </div>
+
+        <div class="form-group">
+          <label for="modelSelect">Model</label>
+          <select id="modelSelect">
+            <option value="google/gemma-3-27b-it">Google Gemma 3 27B IT</option>
+            <option value="google/gemma-3-12b-it">Google Gemma 3 12B IT</option>
+            <option value="anthropic/claude-sonnet-4-20250514">Anthropic Claude Sonnet 4</option>
+            <option value="custom">Custom Model...</option>
+          </select>
+        </div>
+
+        <div class="form-group hidden" id="customModelGroup">
+          <label for="customModelInput">Custom Model Name</label>
+          <input type="text" id="customModelInput" placeholder="e.g., google/gemma-4-moe">
+          <p class="form-hint">Enter the full model identifier from OpenRouter</p>
+        </div>
+      </section>
+
+      <!-- Appearance Section -->
+      <section class="settings-section">
+        <h2>Appearance</h2>
+        <div class="form-group">
+          <label>Theme</label>
+          <div class="theme-toggle">
+            <span class="theme-label light-label">Light</span>
+            <label class="toggle-switch">
+              <input type="checkbox" id="themeToggle">
+              <span class="toggle-slider"></span>
+            </label>
+            <span class="theme-label dark-label">Dark</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Status Messages -->
+      <div id="statusMessage" class="status-message hidden"></div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="settings-footer">
+      <p>ChromeKeeper v1.0.0</p>
+    </footer>
+  </div>
+
+  <script src="settings.js"></script>
+</body>
+</html>

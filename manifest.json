@@ -1,0 +1,32 @@
+{
+  "manifest_version": 3,
+  "name": "ChromeKeeper",
+  "version": "1.0.0",
+  "description": "Manage and organize your Chrome tabs with AI-powered summaries",
+  "permissions": [
+    "tabs",
+    "storage",
+    "sidePanel",
+    "scripting"
+  ],
+  "host_permissions": [
+    "https://openrouter.ai/api/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "ChromeKeeper"
+  },
+  "side_panel": {
+    "default_path": "sidepanel.html"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "commands": {
+    "_execute_action": {
+      "suggested_key": {
+        "default": "Alt+Shift+T"
+      }
+    }
+  }
+}
