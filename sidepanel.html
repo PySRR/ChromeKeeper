@@ -4,368 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tab Manager</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    :root {
-      --bg-primary: #ffffff;
-      --bg-secondary: #f8f9fa;
-      --bg-hover: #e9ecef;
-      --text-primary: #212529;
-      --text-secondary: #6c757d;
-      --border-color: #dee2e6;
-      --accent-color: #4a90d9;
-      --accent-hover: #357abd;
-      --active-bg: #e7f3ff;
-      --active-border: #4a90d9;
-      --pinned-bg: #fff3cd;
-      --pinned-border: #ffc107;
-      --discarded-opacity: 0.6;
-      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-      --shadow-md: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-      background: var(--bg-primary);
-      color: var(--text-primary);
-      font-size: 13px;
-      line-height: 1.4;
-      min-width: 320px;
-      max-width: 480px;
-      height: 100vh;
-      overflow: hidden;
-    }
-
-    .header {
-      position: sticky;
-      top: 0;
-      background: var(--bg-primary);
-      border-bottom: 1px solid var(--border-color);
-      padding: 12px 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      z-index: 100;
-    }
-
-    .header h1 {
-      font-size: 16px;
-      font-weight: 600;
-    }
-
-    .header-stats {
-      font-size: 12px;
-      color: var(--text-secondary);
-    }
-
-    .refresh-btn {
-      background: none;
-      border: 1px solid var(--border-color);
-      border-radius: 4px;
-      padding: 6px 10px;
-      cursor: pointer;
-      font-size: 12px;
-      color: var(--text-secondary);
-      transition: all 0.15s ease;
-    }
-
-    .refresh-btn:hover {
-      background: var(--bg-hover);
-      color: var(--text-primary);
-    }
-
-    .refresh-btn.loading svg {
-      animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
-
-    .content {
-      height: calc(100vh - 52px);
-      overflow-y: auto;
-      padding: 8px 0;
-    }
-
-    .content::-webkit-scrollbar {
-      width: 6px;
-    }
-
-    .content::-webkit-scrollbar-track {
-      background: transparent;
-    }
-
-    .content::-webkit-scrollbar-thumb {
-      background: var(--border-color);
-      border-radius: 3px;
-    }
-
-    .content::-webkit-scrollbar-thumb:hover {
-      background: var(--text-secondary);
-    }
-
-    .domain-group {
-      margin: 4px 8px;
-      border: 1px solid var(--border-color);
-      border-radius: 6px;
-      overflow: hidden;
-      background: var(--bg-primary);
-    }
-
-    .group-header {
-      display: flex;
-      align-items: center;
-      padding: 10px 12px;
-      background: var(--bg-secondary);
-      cursor: pointer;
-      user-select: none;
-      transition: background 0.15s ease;
-    }
-
-    .group-header:hover {
-      background: var(--bg-hover);
-    }
-
-    .group-header svg {
-      width: 16px;
-      height: 16px;
-      margin-right: 8px;
-      color: var(--text-secondary);
-      transition: transform 0.2s ease;
-    }
-
-    .group-header.collapsed svg.chevron {
-      transform: rotate(-90deg);
-    }
-
-    .group-favicon {
-      width: 16px;
-      height: 16px;
-      margin-right: 8px;
-      object-fit: contain;
-    }
-
-    .group-favicon.fallback {
-      background: var(--border-color);
-      border-radius: 3px;
-    }
-
-    .group-title {
-      flex: 1;
-      font-weight: 500;
-      font-size: 13px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .group-count {
-      background: var(--border-color);
-      color: var(--text-secondary);
-      font-size: 11px;
-      font-weight: 500;
-      padding: 2px 6px;
-      border-radius: 10px;
-      min-width: 20px;
-      text-align: center;
-    }
-
-    .group-tabs {
-      border-top: 1px solid var(--border-color);
-    }
-
-    .group-header.collapsed + .group-tabs {
-      display: none;
-    }
-
-    .tab-item {
-      display: flex;
-      align-items: center;
-      padding: 8px 12px 8px 36px;
-      cursor: pointer;
-      transition: background 0.1s ease;
-      border-bottom: 1px solid var(--border-color);
-    }
-
-    .tab-item:last-child {
-      border-bottom: none;
-    }
-
-    .tab-item:hover {
-      background: var(--bg-secondary);
-    }
-
-    .tab-item.active {
-      background: var(--active-bg);
-      border-left: 3px solid var(--active-border);
-      padding-left: 33px;
-    }
-
-    .tab-item.pinned {
-      background: var(--pinned-bg);
-      border-left: 3px solid var(--pinned-border);
-      padding-left: 33px;
-    }
-
-    .tab-item.discarded {
-      opacity: var(--discarded-opacity);
-    }
-
-    .tab-favicon {
-      width: 16px;
-      height: 16px;
-      margin-right: 10px;
-      flex-shrink: 0;
-    }
-
-    .tab-favicon.fallback {
-      background: var(--border-color);
-      border-radius: 3px;
-    }
-
-    .tab-info {
-      flex: 1;
-      min-width: 0;
-    }
-
-    .tab-title {
-      font-size: 13px;
-      font-weight: 400;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      margin-bottom: 2px;
-    }
-
-    .tab-url {
-      font-size: 11px;
-      color: var(--text-secondary);
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .tab-indicators {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      margin-left: 8px;
-      flex-shrink: 0;
-    }
-
-    .indicator {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 18px;
-      height: 18px;
-      border-radius: 3px;
-      flex-shrink: 0;
-    }
-
-    .indicator svg {
-      width: 14px;
-      height: 14px;
-    }
-
-    .indicator.active {
-      background: var(--accent-color);
-      color: white;
-    }
-
-    .indicator.pinned {
-      background: var(--pinned-border);
-      color: #000;
-    }
-
-    .indicator.window {
-      background: var(--bg-hover);
-      color: var(--text-secondary);
-      font-size: 9px;
-      font-weight: 500;
-    }
-
-    .close-tab-btn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 20px;
-      height: 20px;
-      border: none;
-      background: none;
-      border-radius: 3px;
-      cursor: pointer;
-      color: var(--text-secondary);
-      margin-left: 4px;
-      flex-shrink: 0;
-    }
-
-    .close-tab-btn:hover {
-      background: var(--bg-hover);
-      color: var(--text-primary);
-    }
-
-    .close-tab-btn svg {
-      width: 14px;
-      height: 14px;
-    }
-
-    .loading {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 40px 20px;
-      color: var(--text-secondary);
-    }
-
-    .loading svg {
-      width: 32px;
-      height: 32px;
-      animation: spin 1s linear infinite;
-      margin-bottom: 12px;
-    }
-
-    .error {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 40px 20px;
-      color: #dc3545;
-      text-align: center;
-    }
-
-    .error svg {
-      width: 32px;
-      height: 32px;
-      margin-bottom: 12px;
-    }
-
-    .empty-state {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 40px 20px;
-      color: var(--text-secondary);
-      text-align: center;
-    }
-
-    .empty-state svg {
-      width: 48px;
-      height: 48px;
-      margin-bottom: 16px;
-      opacity: 0.5;
-    }
-  </style>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <div class="header">
@@ -373,13 +12,118 @@
       <h1>Tab Manager</h1>
       <span class="header-stats" id="headerStats">Loading...</span>
     </div>
-    <button class="refresh-btn" id="refreshBtn" title="Refresh tabs">
-      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M21 2v6h-6M3 22v-6h6"/>
-        <path d="M21 8A9 9 0 0 0 5.64 3.64L3 6M3 16a9 9 0 0 0 15.36 4.36L21 18"/>
-      </svg>
-    </button>
+    <div class="header-actions">
+      <button class="icon-btn" id="themeToggle" title="Toggle theme">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="5"/>
+          <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+        </svg>
+      </button>
+      <button class="icon-btn" id="settingsBtn" title="Settings">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+      </button>
+      <button class="refresh-btn" id="refreshBtn" title="Refresh tabs">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 2v6h-6M3 22v-6h6"/>
+          <path d="M21 8A9 9 0 0 0 5.64 3.64L3 6M3 16a9 9 0 0 0 15.36 4.36L21 18"/>
+        </svg>
+      </button>
+    </div>
   </div>
+
+  <!-- Settings Panel -->
+  <div class="settings-panel" id="settingsPanel">
+    <div class="settings-header">
+      <h2>Settings</h2>
+      <button class="icon-btn" id="closeSettings" title="Close settings">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6L6 18M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+    <div class="settings-content">
+      <div class="setting-group">
+        <label for="apiKey">OpenRouter API Key</label>
+        <input type="password" id="apiKey" placeholder="sk-or-v1-..." autocomplete="off">
+        <div class="api-key-status" id="apiKeyStatus"></div>
+      </div>
+      <div class="setting-group">
+        <label for="modelSelect">Model</label>
+        <select id="modelSelect">
+          <option value="openai/gpt-4o-mini">GPT-4o mini</option>
+          <option value="openai/gpt-4o">GPT-4o</option>
+          <option value="anthropic/claude-3.5-sonnet">Claude 3.5 Sonnet</option>
+          <option value="anthropic/claude-3-haiku">Claude 3 Haiku</option>
+          <option value="google/gemini-2.0-flash">Gemini 2.0 Flash</option>
+          <option value="google/gemini-2.0-flash-exp:free">Gemini 2.0 Flash (Free)</option>
+          <option value="meta-llama/llama-3.3-70b-instruct">Llama 3.3 70B</option>
+          <option value="mistralai/mistral-large-2411">Mistral Large</option>
+          <option value="custom">Custom Model</option>
+        </select>
+      </div>
+      <div class="setting-group hidden" id="customModelGroup">
+        <label for="customEndpoint">Custom Model Endpoint</label>
+        <input type="text" id="customEndpoint" placeholder="https://api.example.com/v1/chat/completions">
+      </div>
+      <div class="setting-group">
+        <label for="customModelInput">Custom Model ID (if using custom endpoint)</label>
+        <input type="text" id="customModelInput" placeholder="model-name">
+      </div>
+      <div class="setting-group">
+        <label for="autoRefresh">Auto-refresh</label>
+        <select id="autoRefresh">
+          <option value="0">Disabled</option>
+          <option value="30000">Every 30 seconds</option>
+          <option value="60000">Every 1 minute</option>
+          <option value="300000">Every 5 minutes</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI Summary Panel -->
+  <div class="summary-panel" id="summaryPanel">
+    <div class="summary-header">
+      <h2>AI Summary</h2>
+      <button class="icon-btn" id="closeSummary" title="Close summary">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6L6 18M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+    <div class="summary-content">
+      <div class="summary-actions">
+        <button class="summary-btn" id="summarizeAll">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          </svg>
+          Summarize all
+        </button>
+        <button class="summary-btn secondary" id="summarizeGroup" disabled>
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7"/>
+            <rect x="14" y="3" width="7" height="7"/>
+            <rect x="14" y="14" width="7" height="7"/>
+            <rect x="3" y="14" width="7" height="7"/>
+          </svg>
+          Summarize group
+        </button>
+      </div>
+      <div class="summary-output" id="summaryOutput">
+        <div class="summary-placeholder">
+          <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            <path d="M8 10h.01M12 10h.01M16 10h.01"/>
+          </svg>
+          <p>Select a group and click "Summarize group" or "Summarize all" to get AI-powered summaries of your tabs.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="content" id="content">
     <div class="loading" id="loadingState">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -389,200 +133,15 @@
     </div>
   </div>
 
-  <script>
-    const content = document.getElementById('content');
-    const refreshBtn = document.getElementById('refreshBtn');
-    const headerStats = document.getElementById('headerStats');
-    const loadingState = document.getElementById('loadingState');
+  <div class="footer">
+    <button class="footer-btn" id="summaryToggle" title="AI Summary">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+      </svg>
+      AI Summary
+    </button>
+  </div>
 
-    // SVG icons as strings
-    const icons = {
-      chevron: '<svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>',
-      active: '<svg class="indicator active" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" title="Active tab"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>',
-      pinned: '<svg class="indicator pinned" viewBox="0 0 24 24" fill="currentColor" title="Pinned tab"><path d="M16 2L16.2 2.2L16.4 2L22 8V9L20 11L18 9L15 12L17 14L12 19L14 22H2V14L6 10L8 12L11 9L9 7L11 5L11.2 4.8L11.4 5L16 2Z"/></svg>',
-      close: '<button class="close-tab-btn" title="Close tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>',
-      error: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>',
-      empty: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>',
-    };
-
-    function getFaviconHTML(tab, domain) {
-      let src = null;
-      if (tab.favIconUrl && !tab.favIconUrl.startsWith('data:')) {
-        src = tab.favIconUrl;
-      } else if (!domain.startsWith('chrome://') && !domain.startsWith('about:')) {
-        src = `https://www.google.com/s2/favicons?domain=${domain}&sz=32`;
-      }
-      if (src) {
-        return `<img class="tab-favicon" src="${src}" alt="" onerror="this.classList.add('fallback');this.onerror=null;this.removeAttribute('src');"/>`;
-      }
-      return `<span class="tab-favicon fallback"></span>`;
-    }
-
-    function getGroupFaviconHTML(group) {
-      const firstTab = group.tabs[0];
-      if (group.faviconUrl) {
-        return `<img class="group-favicon" src="${group.faviconUrl}" alt="" onerror="this.classList.add('fallback');this.onerror=null;this.removeAttribute('src');"/>`;
-      }
-      return `<span class="group-favicon fallback"></span>`;
-    }
-
-    function getWindowIndicator(windowId) {
-      return `<span class="indicator window" title="Window ${windowId}">W${windowId}</span>`;
-    }
-
-    function renderTab(tab, domain) {
-      const indicators = [];
-      if (tab.active) indicators.push(icons.active);
-      if (tab.pinned) indicators.push(icons.pinned);
-      indicators.push(getWindowIndicator(tab.windowId));
-
-      let classes = 'tab-item';
-      if (tab.active) classes += ' active';
-      if (tab.pinned) classes += ' pinned';
-      if (tab.discarded) classes += ' discarded';
-
-      return `
-        <div class="${classes}" data-tab-id="${tab.id}" title="${escapeHtml(tab.url)}">
-          ${getFaviconHTML(tab, domain)}
-          <div class="tab-info">
-            <div class="tab-title">${escapeHtml(tab.title)}</div>
-            <div class="tab-url">${escapeHtml(truncateUrl(tab.url))}</div>
-          </div>
-          <div class="tab-indicators">
-            ${indicators.join('')}
-            ${icons.close}
-          </div>
-        </div>
-      `;
-    }
-
-    function renderGroup(group) {
-      const tabsHTML = group.tabs.map(tab => renderTab(tab, group.domain)).join('');
-      return `
-        <div class="domain-group">
-          <div class="group-header" data-group="${escapeHtml(group.domain)}">
-            ${icons.chevron}
-            ${getGroupFaviconHTML(group)}
-            <span class="group-title">${escapeHtml(group.domain)}</span>
-            <span class="group-count">${group.tabs.length}</span>
-          </div>
-          <div class="group-tabs">
-            ${tabsHTML}
-          </div>
-        </div>
-      `;
-    }
-
-    function renderState(state) {
-      if (!state || !state.success) {
-        return `
-          <div class="error">
-            ${icons.error}
-            <p>Failed to load tabs</p>
-            <p style="font-size: 11px; margin-top: 8px;">${state?.error || 'Unknown error'}</p>
-          </div>
-        `;
-      }
-
-      if (state.groups.length === 0) {
-        return `
-          <div class="empty-state">
-            ${icons.empty}
-            <p>No tabs open</p>
-          </div>
-        `;
-      }
-
-      headerStats.textContent = `${state.totalTabs} tabs across ${state.groups.length} domains`;
-      return state.groups.map(group => renderGroup(group)).join('');
-    }
-
-    function escapeHtml(text) {
-      const div = document.createElement('div');
-      div.textContent = text;
-      return div.innerHTML;
-    }
-
-    function truncateUrl(url) {
-      if (!url) return '';
-      try {
-        const urlObj = new URL(url);
-        return urlObj.pathname + urlObj.search;
-      } catch {
-        return url.length > 60 ? url.substring(0, 60) + '...' : url;
-      }
-    }
-
-    async function loadTabs() {
-      refreshBtn.classList.add('loading');
-      content.innerHTML = `
-        <div class="loading">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="10" stroke-dasharray="31.4" stroke-dashoffset="10"/>
-          </svg>
-          <span>Loading tabs...</span>
-        </div>
-      `;
-
-      try {
-        const response = await new Promise((resolve) => {
-          chrome.runtime.sendMessage({ type: 'GET_TABS' }, resolve);
-        });
-        content.innerHTML = renderState(response);
-        attachEventListeners();
-      } catch (error) {
-        content.innerHTML = `
-          <div class="error">
-            ${icons.error}
-            <p>Failed to load tabs</p>
-            <p style="font-size: 11px; margin-top: 8px;">${escapeHtml(error.message)}</p>
-          </div>
-        `;
-      } finally {
-        refreshBtn.classList.remove('loading');
-      }
-    }
-
-    function attachEventListeners() {
-      // Group collapse/expand
-      document.querySelectorAll('.group-header').forEach(header => {
-        header.addEventListener('click', () => {
-          header.classList.toggle('collapsed');
-        });
-      });
-
-      // Tab activation
-      document.querySelectorAll('.tab-item').forEach(item => {
-        item.addEventListener('click', (e) => {
-          if (e.target.closest('.close-tab-btn')) return;
-          const tabId = parseInt(item.dataset.tabId);
-          chrome.runtime.sendMessage({ type: 'ACTIVATE_TAB', tabId });
-        });
-      });
-
-      // Close tab buttons
-      document.querySelectorAll('.close-tab-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          const tabId = parseInt(btn.closest('.tab-item').dataset.tabId);
-          chrome.runtime.sendMessage({ type: 'CLOSE_TAB', tabId });
-        });
-      });
-    }
-
-    // Event listeners
-    refreshBtn.addEventListener('click', loadTabs);
-
-    // Listen for tab updates from background
-    chrome.runtime.onMessage.addListener((message) => {
-      if (message.type === 'TABS_UPDATED') {
-        content.innerHTML = renderState(message.data);
-        attachEventListeners();
-      }
-    });
-
-    // Initial load
-    loadTabs();
-  </script>
+  <script src="sidepanel.js"></script>
 </body>
 </html>
