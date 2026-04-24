@@ -1,0 +1,34 @@
+{
+  "manifest_version": 3,
+  "name": "Tab Manager with AI Summary",
+  "version": "1.0.0",
+  "description": "Manage your Chrome tabs with AI-powered summaries",
+  "permissions": [
+    "tabs",
+    "sidePanel",
+    "storage"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_title": "Tab Manager"
+  },
+  "side_panel": {
+    "default_path": "sidepanel.html"
+  },
+  "commands": {
+    "open-side-panel": {
+      "suggested_key": {
+        "default": "Alt+Shift+T",
+        "mac": "MacCtrl+Shift+T"
+      },
+      "description": "Open Tab Manager side panel"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}
