@@ -267,8 +267,12 @@
       width: 18px;
       height: 18px;
       border-radius: 3px;
-      font-size: 10px;
-      font-weight: 500;
+      flex-shrink: 0;
+    }
+
+    .indicator svg {
+      width: 14px;
+      height: 14px;
     }
 
     .indicator.active {
@@ -285,6 +289,7 @@
       background: var(--bg-hover);
       color: var(--text-secondary);
       font-size: 9px;
+      font-weight: 500;
     }
 
     .close-tab-btn {
@@ -393,8 +398,8 @@
     // SVG icons as strings
     const icons = {
       chevron: '<svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>',
-      active: '<span class="indicator active" title="Active tab">A</span>',
-      pinned: '<span class="indicator pinned" title="Pinned tab">P</span>',
+      active: '<svg class="indicator active" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" title="Active tab"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>',
+      pinned: '<svg class="indicator pinned" viewBox="0 0 24 24" fill="currentColor" title="Pinned tab"><path d="M16 2L16.2 2.2L16.4 2L22 8V9L20 11L18 9L15 12L17 14L12 19L14 22H2V14L6 10L8 12L11 9L9 7L11 5L11.2 4.8L11.4 5L16 2Z"/></svg>',
       close: '<button class="close-tab-btn" title="Close tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>',
       error: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>',
       empty: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>',
@@ -408,7 +413,7 @@
         src = `https://www.google.com/s2/favicons?domain=${domain}&sz=32`;
       }
       if (src) {
-        return `<img class="tab-favicon" src="${src}" alt="" onerror="this.classList.add('fallback');this.style.display='none';"/>`;
+        return `<img class="tab-favicon" src="${src}" alt="" onerror="this.classList.add('fallback');this.onerror=null;this.removeAttribute('src');"/>`;
       }
       return `<span class="tab-favicon fallback"></span>`;
     }
@@ -416,7 +421,7 @@
     function getGroupFaviconHTML(group) {
       const firstTab = group.tabs[0];
       if (group.faviconUrl) {
-        return `<img class="group-favicon" src="${group.faviconUrl}" alt="" onerror="this.classList.add('fallback');this.style.display='none';"/>`;
+        return `<img class="group-favicon" src="${group.faviconUrl}" alt="" onerror="this.classList.add('fallback');this.onerror=null;this.removeAttribute('src');"/>`;
       }
       return `<span class="group-favicon fallback"></span>`;
     }
