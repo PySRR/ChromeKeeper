@@ -159,6 +159,17 @@ chrome.tabs.onMoved.addListener(() => notifyTabsUpdated());
 chrome.windows.onCreated.addListener(() => notifyTabsUpdated());
 chrome.windows.onRemoved.addListener(() => notifyTabsUpdated());
 
+// Keyboard shortcut to open side panel
+chrome.commands.onCommand.addListener((command) => {
+  if (command === 'open-side-panel') {
+    chrome.tabs.query({ active: true, currentWindow: true }).then((tabs) => {
+      if (tabs.length > 0) {
+        chrome.sidePanel.open({ windowId: tabs[0].windowId });
+      }
+    });
+  }
+});
+
 async function notifyTabsUpdated() {
   const data = await getAllTabs();
   try {
