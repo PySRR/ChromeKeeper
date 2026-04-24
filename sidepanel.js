@@ -115,6 +115,10 @@ function updateApiKeyStatus(status, message = '') {
   apiKeyStatus.classList.add('visible');
 
   switch (status) {
+    case 'typing':
+      apiKeyStatus.classList.add('validating');
+      apiKeyStatus.textContent = message || 'Saving...';
+      break;
     case 'saved':
       apiKeyStatus.classList.add('success');
       apiKeyStatus.textContent = 'API key saved';
@@ -312,10 +316,10 @@ function attachEventListeners() {
     });
   });
 
-  // Group selection for summary
+  // Group selection for summary (click on group body, not header)
   document.querySelectorAll('.domain-group').forEach(group => {
     group.addEventListener('click', (e) => {
-      if (e.target.closest('.group-header')) {
+      if (!e.target.closest('.group-header') && !e.target.closest('.close-tab-btn')) {
         const domain = group.dataset.groupDomain;
         selectGroup(domain);
       }
@@ -367,7 +371,7 @@ function updateGroupSummaryButton() {
 }
 
 // AI Summary
-async function callOpenRouter(messages, onChunk) {
+async function callOpenRouter(messages) {
   const apiKey = apiKeyInput.value.trim();
   if (!apiKey) {
     throw new Error('Please enter your OpenRouter API key in Settings.');
@@ -529,9 +533,14 @@ function init() {
   let apiKeyDebounce = null;
   apiKeyInput.addEventListener('input', () => {
     clearTimeout(apiKeyDebounce);
-    updateApiKeyStatus('saved');
+    if (apiKeyInput.value.trim()) {
+      updateApiKeyStatus('typing', 'Saving...');
+    } else {
+      updateApiKeyStatus(null);
+    }
     apiKeyDebounce = setTimeout(() => {
       saveSetting('apiKey', apiKeyInput.value);
+      updateApiKeyStatus('saved');
       validateApiKey(apiKeyInput.value);
     }, 500);
   });
@@ -547,8 +556,17 @@ function init() {
   chrome.runtime.onMessage.addListener((message) => {
     if (message.type === 'TABS_UPDATED') {
       currentTabs = message.data;
+      if (selectedGroup) {
+        const stillExists = message.data?.groups?.find(
+          g => g.domain === selectedGroup.domain
+        );
+        if (!stillExists) {
+          selectedGroup = null;
+        }
+      }
       content.innerHTML = renderState(message.data);
       attachEventListeners();
+      updateGroupSummaryButton();
     }
   });
 
